@@ -1,0 +1,104 @@
+# Jekyll settings for ArisQ's blog
+
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely edit after that. If you find
+# yourself editing this file very often, consider using Jekyll's data files
+# feature for the data you need to update frequently.
+#
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'bundle exec jekyll serve'. If you change this file, please restart the server
+# process.
+
+# Where things are
+# source:          .
+# destination:     ./_site
+# collections_dir: .
+# plugins_dir:     _plugins
+# layouts_dir:     _layouts
+# data_dir:        _data
+# includes_dir:    _includes
+# collections:
+#   posts:
+#     output:   true
+
+# Handling Reading
+safe:                   true # false
+# include:              [".htaccess"]
+# exclude:              ["Gemfile", "Gemfile.lock", "node_modules", "vendor/bundle/", "vendor/cache/", "vendor/gems/", "vendor/ruby/"]
+# keep_files:           [".git", ".svn"]
+# encoding:             "utf-8"
+# markdown_ext:         "markdown,mkdown,mkdn,mkd,md"
+strict_front_matter:    true # false
+
+# Filtering Content
+# show_drafts: null
+# limit_posts: 0
+# future:      false
+# unpublished: false
+
+# Plugins
+# whitelist: []
+# plugins:   []
+
+# Conversion
+# markdown:    kramdown
+# highlighter: rouge
+# lsi:         false
+# excerpt_separator: "\n\n"
+# incremental: false
+
+# Serving
+# detach:  false
+# port:    4000
+# host:    blog.lipbcu.love # 127.0.0.1
+# baseurl: "" # does not include hostname
+# show_dir_listing: false
+
+# Outputting
+permalink:     /:categories/:title/
+# paginate_path: /page:num
+timezone:      Asia/Shanghai # null
+#
+# quiet:    false
+# verbose:  false
+defaults:
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "ArisQ"
+#
+liquid:
+  error_mode: strict # warn
+
+# Markdown Processors
+# rdiscount:
+#   extensions: []
+#
+# redcarpet:
+#   extensions: []
+#
+# kramdown:
+#   auto_ids:       true
+#   entity_output:  as_char
+#   toc_levels:     1..6
+#   smart_quotes:   lsquo,rsquo,ldquo,rdquo
+#   input:          GFM
+#   hard_wrap:      false
+#   footnote_nr:    1
+#   show_warnings:  false
+
+
+# Build Command Options
+# profile: false
+# Custom WEBrick Headers
+# webrick:
+#   headers:
+#     My-Header: My-Value
+
+
+# Extra settings
+images: http://p269wz8eb.bkt.clouddn.com
+title: ArisQ's Blog

@@ -1,0 +1,19 @@
+---
+layout: default
+title: ArisQ's blog
+---
+
+<div class="posts-wrapper">
+    {% for post in site.posts %}
+    <section class="post-view">
+        <a  class="post-title" href="{{post.url}}">{{post.title}}</a> 
+        <div class="post-info">
+            <!-- <p class="author">{{post.author}}</p> -->
+            <p class="post-date">{{post.date|date_to_string}}</p>
+        </div>
+        <div class="post-content">
+            {{post.excerpt}}
+        </div>
+    </section>
+    {% endfor %}
+</div>

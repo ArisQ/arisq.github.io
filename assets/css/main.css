@@ -23,6 +23,12 @@ h1,h2,h3,h4,h5,h6
     margin: 0px;
 }
 
+p
+{
+    line-height: 1.5;
+    margin: 10px 0px;
+}
+
 a
 {
     color: darkcyan;
@@ -109,5 +115,6 @@ header::after
 .author, .post-date
 {
     display: inline-block;
+    margin: 0px;
 }
 

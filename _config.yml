@@ -17,9 +17,10 @@
 # layouts_dir:     _layouts
 # data_dir:        _data
 # includes_dir:    _includes
-# collections:
-#   posts:
-#     output:   true
+collections:
+  demos:
+    output: true
+    permalink: /:collection/:name/
 
 # Handling Reading
 safe:                   true # false
@@ -69,6 +70,12 @@ defaults:
     values:
       layout: "post"
       author: "ArisQ"
+  -
+    scope:
+      path: ""
+      type: "demos"
+    values:
+      layout: "default"
 #
 liquid:
   error_mode: strict # warn
@@ -101,4 +108,5 @@ liquid:
 
 # Extra settings
 images: http://p269wz8eb.bkt.clouddn.com
+post-data: http://p269wz8eb.bkt.clouddn.com
 title: ArisQ's Blog

@@ -118,3 +118,21 @@ header::after
     margin: 0px;
 }
 
+/* post content */
+table
+{
+    border-collapse:collapse;
+    margin: 10px auto;
+}
+
+table, th, td
+{
+    border: 1px solid black;
+}
+
+img
+{
+    max-width: 80%;
+    display: block;
+    margin: 0 auto;
+}

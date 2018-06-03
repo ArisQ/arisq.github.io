@@ -1,0 +1,211 @@
+---
+---
+
+<!DOCTYPE html>
+
+<!--
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
+			Version 2, December 2004 
+
+Copyright (C) 2004 ArisQ <qiaoli.pg@gmail.com> 
+
+Everyone is permitted to copy and distribute verbatim or modified 
+copies of this license document, and changing it is allowed as long 
+as the name is changed. 
+
+		DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
+  TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION 
+
+ 0. You just DO WHAT THE FUCK YOU WANT TO. 
+-->
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>剑网三装备精炼计算器</title>
+	<script>
+		function calcProbability() {
+			// 部位(part) 			武器		暗器		衣服		帽子		裤子		腰带		鞋子		护腕		腰坠		戒指		项链
+			// 系数(k_score,part)	2.16	1.08	1.8		1.62	1.8		1.26	1.26	1.26	0.9		0.9		0.9
+			var equip_score_coefficient = new Array(2.16, 1.08, 1.8, 1.62, 1.8, 1.26, 1.26, 1.26, 0.9, 0.9, 0.9);//不同部位未精炼时装备分数与装备品级的比例
+			var refine_grade_coefficient = new Array(1, 0.315275948, 0.102167808, 0.034483253, 0.012386421, 0.004956784);//不同精炼等级的成功率系数，与0级精炼的比值
+			var stone_grade_coefficient = 3.7;//五行石不同等级成功率系数，每级五行石是低一级的五行石成功率的stone_grade_coefficient(约为3.7)倍
+			var prob_score_product_coefficient = new Array(387.8295, 7.6177);//成功率与装备分数的积与装备品级成线性关系，见prob_score_product
+
+			grade = document.getElementById("grade").value;
+			part = document.getElementById("part").value;
+			if (grade < 0)
+				window.alert("装备品级必须大于0");
+			prob_score_product = prob_score_product_coefficient[0] + prob_score_product_coefficient[1] * grade;//成功率与装备分数成反比，两者积为prob_score_product
+			score = equip_score_coefficient[part] * grade;//装备分数
+			prob_0_1_1 = prob_score_product / score;//使用一级五行石从0精炼到1的成功率
+			var prob = new Array();
+			for (var i = 0; i < 6; i++) { //精炼等级i->i+1
+				prob[i] = new Array();
+				for (var j = 0; j < 6; j++) {//使用j+1级五行石
+					prob[i][j] = prob_0_1_1 * refine_grade_coefficient[i] * Math.pow(stone_grade_coefficient, j);
+				}
+			}
+			return prob;
+		}
+		function calcStoneNumber(prob, target_prob) {
+			var s;
+			var num = new Array();
+			var actual_prob = new Array();
+			for (var i = 0; i < 6; i++) {
+				num[i] = new Array();
+				for (var j = 0; j < 6; j++)
+					num[i][j] = 0;
+				s = 0;
+				while (prob[i][s] < target_prob / 16)
+					s++;
+				if (s == 0) {
+					num[i][s] = Math.ceil(target_prob / prob[i][s]);
+					actual_prob[i] = num[i][s] * prob[i][s];
+				} else {
+					num[i][s] = Math.ceil((target_prob - 16 * prob[i][s - 1]) / (prob[i][s] - prob[i][s - 1]));
+					num[i][s - 1] = Math.ceil((target_prob - prob[i][s] * num[i][s]) / prob[i][s - 1]);
+					if (num[i][s - 1] < 0)
+						num[i][s - 1] = 0;
+					actual_prob[i] = num[i][s] * prob[i][s] + num[i][s - 1] * prob[i][s - 1];
+				}
+			}
+			console.log(num);
+			console.log(actual_prob);
+			return [num, actual_prob];
+		}
+		function displayProbTable(prob) {
+			//生成表格
+			prob_table = document.getElementById("prob_table");
+			prob_table.border = "1";
+			var prob_result = "";
+			prob_result += "<caption>单五行石精炼成功率</caption> \
+			<tr> \
+			<th>装备精炼等级</th> \
+			<th>一级五行石</th> \
+			<th>二级五行石</th> \
+			<th>三级五行石</th> \
+			<th>四级五行石</th> \
+			<th>五级五行石</th> \
+			<th>六级五行石</th> \
+			</tr>";
+			for (var i = 0; i < 6; i++) {
+				prob_result += "<tr>";
+				prob_result += "<th>" + i + "->" + (i + 1) + "</th>";
+				for (var j = 0; j < 6; j++) {
+					prob_result += "<td>";
+					prob_result += prob[i][j].toFixed(3);
+					prob_result += "</td>";
+				}
+				prob_result += "</tr>";
+			}
+			prob_table.innerHTML = prob_result;
+		}
+		function displayStoneNumTable(num, actual_prob) {
+			console.log(num);
+			num_table = document.getElementById("num_table");
+			num_table.border = "1";
+			var num_result = "";
+			num_result += "<caption>精炼五行石数量</caption> \
+			<tr> \
+			<th>装备精炼等级</th> \
+			<th>一级五行石</th> \
+			<th>二级五行石</th> \
+			<th>三级五行石</th> \
+			<th>四级五行石</th> \
+			<th>五级五行石</th> \
+			<th>六级五行石</th> \
+			<th>成功率</th> \
+			</tr>";
+			var num_sum = new Array();
+			for (var i = 0; i < 6; i++)
+				num_sum[i] = 0;
+			for (var i = 0; i < 6; i++) {
+				num_result += "<tr>";
+				num_result += "<th>" + i + "->" + (i + 1) + "</th>";
+				for (var j = 0; j < 6; j++) {
+					num_result += "<td>";
+					num_result += num[i][j];
+					num_result += "</td>";
+					num_sum[j] += num[i][j];
+				}
+				num_result += "<td>" + actual_prob[i].toFixed(3) + "</td>";
+				num_result += "</tr>";
+			}
+			num_result += "<tr>";
+			num_result += "<th>总计</th>";
+			for (var i = 0; i < 6; i++) {
+				num_result += "<td>" + num_sum[i] + "</td>";
+			}
+			num_result += "<td></td>";
+			num_result += "</tr>";
+			num_table.innerHTML = num_result;
+		}
+		function calculate(prob, target_prob) {
+			target_prob = document.getElementById("prob").value;
+			prob = calcProbability();
+			num_prob = calcStoneNumber(prob, target_prob);
+			num = num_prob[0];
+			actual_prob = num_prob[1];
+			console.log(num);
+			console.log(actual_prob);
+			displayProbTable(prob);
+			displayStoneNumTable(num, actual_prob);
+		}
+		function onGradeSelection() {
+			grade_select = document.getElementById("grade_select");
+			grade = document.getElementById("grade");
+			grade.value = grade_select.value
+		}
+	</script>
+</head>
+
+<body margin="auto">
+	<div class="container">
+		<div class="input">
+			<h1>剑网三装备精炼计算器</h1>
+
+			<label for="grade">装备品级:</label>
+			<input type="text" id="grade" value="595">
+			<select id="grade_select" onchange="onGradeSelection()">
+				<option value=595>595</option>
+				<option value=1060>1060</option>
+				<option value=1080>1080</option>
+				<option value=1140>1140</option>
+				<option value=1240>1240</option>
+				<option value=1350>1350</option>
+			</select>
+			<br/>
+
+			<label for="part">装备部位:</label>
+			<select id="part">
+				<option value=0>武器</option>
+				<option value=1>暗器</option>
+				<option value=2>衣服</option>
+				<option value=3>帽子</option>
+				<option value=4>裤子</option>
+				<option value=5>腰带</option>
+				<option value=6>鞋子</option>
+				<option value=7>护腕</option>
+				<option value=8>腰坠</option>
+				<option value=9>戒指</option>
+				<option value=10>项链</option>
+			</select>
+			<br/>
+
+			<label for="prob">目标成功率:</label>
+			<input type="text" id="prob" value="95"> %
+			<br/>
+
+			<button type="button" onclick="calculate()">计算</button>
+		</div>
+
+		<div class="output">
+			<table id="prob_table"></table>
+			<table id="num_table"></table>
+		</div>
+	</div>
+</body>
+
+</html>
